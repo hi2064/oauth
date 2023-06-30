@@ -26,6 +26,12 @@ public class PostDtoV2 {
 
   private String body;
 
+  private Integer userId;
+
+  private Integer likeCount;
+
+//  private Integer likeStatus;
+
   private Optional<List<CommentDto>> comment;
 
 }

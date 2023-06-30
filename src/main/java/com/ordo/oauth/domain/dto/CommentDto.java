@@ -1,6 +1,7 @@
 package com.ordo.oauth.domain.dto;
 
 import com.ordo.oauth.domain.entity.BaseEntity;
+import com.ordo.oauth.enums.RoleType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +27,8 @@ public class CommentDto extends BaseEntity {
   private Integer userId;
 
   private String userName;
+
+  private RoleType role;
+
 
 }

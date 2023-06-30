@@ -10,5 +10,10 @@ public interface PostRepositoryV2  extends JpaRepository<PostEntityV2, Integer> 
 
   Optional<PostEntityV2> findById(Integer id);
 
+  Optional<PostEntityV2> findByIdAndUserId(Integer id, Integer userId);
+
   Optional<PostEntityV2> findByIdAndAndUserId(Integer id, Integer userId);
+
+  Long countAllBy();
+
 }

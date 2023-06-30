@@ -1,5 +1,6 @@
 package com.ordo.oauth.utils;
 
+import com.ordo.oauth.domain.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,6 +25,10 @@ public class JwtTokenUtils {
 
     public static String getUsername(String token, String key) {
         return extractAllClaims(token, key).get("username", String.class);
+    }
+
+    public static String getEmail(String token, String key) {
+        return extractAllClaims(token, key).get("email", String.class);
     }
 
     public static Boolean isTokenExpired(String token, String key) {

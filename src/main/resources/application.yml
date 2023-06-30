@@ -26,6 +26,25 @@ spring:
       matching-strategy: ant_path_matcher
   main:
     allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 938842229751-bhmkrt95tjib70nmkeba9c70amp3gill.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8090/api/v2/users/login/google
+            scope:
+              - profile
+              - email
+
+#      google:
+#        client-id: 938842229751-bhmkrt95tjib70nmkeba9c70amp3gill.apps.googleusercontent.com
+#        client-secret: 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
+#        redirect-uri: http://localhost:8090/api/v2/users/login/google
+#        token-uri: https://oauth2.googleapis.com/token
+#        resource-uri: https://www.googleapis.com/oauth2/v2/userinfo
+
 jwt:
   token:
     secret: ordo20121101!
@@ -37,3 +56,4 @@ jwt:
 #    jks-alias: ldcc
 #    store-pass: ldcc!2626
 #    key-pass: ldcc!2626
+

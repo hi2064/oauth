@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeRequests()
 //            .antMatchers("/**").permitAll()
-                .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll()
+                .antMatchers("/api/v1/users/join", "/api/v1/users/login", "/api/v2/users/login/**", "https://accounts.google.com/o/oauth2/auth", "https://oauth2.googleapis.com/token").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/v1/posts/*", "/api/v1/posts").authenticated()
                 .antMatchers(HttpMethod.GET,"/api/v1/hello/api-auth-test").authenticated()
                 .and()

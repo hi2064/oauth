@@ -1,6 +1,8 @@
 package com.ordo.oauth.controller;
 
 import com.ordo.oauth.annotation.Permission;
+import com.ordo.oauth.domain.User;
+import com.ordo.oauth.domain.dto.CommentDto;
 import com.ordo.oauth.domain.dto.CommentV2;
 import com.ordo.oauth.domain.dto.PostCommentRequest;
 import com.ordo.oauth.domain.dto.PostDto;
@@ -61,6 +63,12 @@ public class PostControllerV2 {
 //    return ApiResult.success(postServiceV2.posts())
   }
 
+  @ApiOperation(value = "게시글 count" , notes = "전체 게시글 count")
+  @GetMapping("/posts/count")
+  public ApiResult<Long> getListCount(){
+    return ApiResult.success(postServiceV2.getListCount());
+  }
+
   // 게시물 리스트 테스트 api
   @ApiOperation(value = "게시글 조회 QueryDsl test", notes = "게시글 전체 조회 Querydsl test")
   @GetMapping("/test/posts")
@@ -73,12 +81,17 @@ public class PostControllerV2 {
   // 게시물 단건 검색
   @ApiOperation(value = "게시글 단건 검색", notes = "선택한 글의 상세정보를 조회한다.")
   @GetMapping("/{id}")
-  @Permission(authority = RoleType.USER)
+//  @Permission(authority = RoleType.USER)
   public ApiResult<PostDtoV2> getPost(@PathVariable Integer id){
-
-
-
     return ApiResult.success(postServiceV2.getPost(id));
+  }
+
+  // 좋아요 여부
+  @ApiOperation(value = "글 좋아요 여부", notes = "선택한 글의 좋아요 여부를 확인한다")
+  @GetMapping("/like/status/{postId}")
+  @Permission(authority = RoleType.USER)
+  public ApiResult<Integer> getLikeCount(@PathVariable Integer postId, Authentication auth){
+    return ApiResult.success(postServiceV2.getLikeCount(postId, auth));
   }
 
   // 게시글 등록
@@ -90,13 +103,20 @@ public class PostControllerV2 {
     return ApiResult.success(postServiceV2.create(request, auth));
   }
 
+//  @ApiOperation(value = "게시글 등록 이미지 등록", notes = "게시글을 등록하며 이미지도 등록")
+//  @PostMapping("/create/image")
+//  @Permission(authority = RoleType.USER)
+//  public ApiResult<Integer> createImagePost(@RequestBody){
+//
+//  }
+
   // 게시글 수정
   @ApiOperation(value = "글 수정", notes = "선택한 글을 수정한다.")
-  @PostMapping("/modify/{userId}")
+  @PostMapping("/modify")
   @Permission(authority = RoleType.USER)
-  public ApiResult<Integer> modifyPost(@PathVariable Integer userId, @RequestBody PostRequestV2 request){
+  public ApiResult<Integer> modifyPost(@RequestBody PostRequestV2 request, Authentication auth){
 
-    return ApiResult.success(postServiceV2.modify(userId, request));
+    return ApiResult.success(postServiceV2.modify(request, auth));
   }
 
   // 게시글 삭제
@@ -105,6 +125,29 @@ public class PostControllerV2 {
   @Permission(authority = RoleType.USER)
   public ApiResult<Integer> deletePost(@PathVariable Integer postId, Authentication auth){
     return ApiResult.success(postServiceV2.delete(postId, auth));
+  }
+
+  @ApiOperation(value = "좋아요", notes = "글에 좋아요를 한다")
+  @PostMapping("/like/{postId}")
+  @Permission(authority = RoleType.USER)
+  public ApiResult<String> likePost(@PathVariable Integer postId, Authentication auth){
+
+    return ApiResult.success(postServiceV2.likePost(postId, auth));
+  }
+
+  @ApiOperation(value = "좋아요 취소", notes = "좋아요를 취소한다")
+  @DeleteMapping("/like/cancel/{postId}")
+  @Permission(authority = RoleType.USER)
+  public ApiResult<String> likeCancelPost(@PathVariable Integer postId, Authentication auth){
+
+    return ApiResult.success(postServiceV2.likeCancelPost(postId, auth));
+  }
+
+
+  @ApiOperation(value = "댓글조회", notes = "댓글을 조회한다")
+  @GetMapping("/comment/{postId}")
+  public ApiResult<Optional<List<CommentDto>>> getComment(@PathVariable Integer postId){
+    return ApiResult.success(postServiceV2.getComment(postId));
   }
 
   // 댓글 생성
@@ -123,16 +166,18 @@ public class PostControllerV2 {
   @Permission(authority = RoleType.USER)
   public ApiResult<Integer> modifyComment(
       @PathVariable Integer commentId,
-      @RequestBody CommentV2 dto){
-    return ApiResult.success(postServiceV2.modifyComment(commentId, dto));
+      @RequestBody CommentV2 dto,
+      Authentication auth
+  ){
+    return ApiResult.success(postServiceV2.modifyComment(commentId, dto, auth));
   }
 
   // 댓글 삭제
   @ApiOperation(value = "댓글 삭제", notes = "선택한 댓글을 삭제한다.")
   @DeleteMapping("/delete/comment/{commentId}")
   @Permission(authority = RoleType.USER)
-  public ApiResult<Integer> deleteComment(@PathVariable Integer commentId){
+  public ApiResult<Integer> deleteComment(@PathVariable Integer commentId, Authentication auth){
 
-    return ApiResult.success(postServiceV2.deleteComment(commentId));
+    return ApiResult.success(postServiceV2.deleteComment(commentId, auth));
   }
 }

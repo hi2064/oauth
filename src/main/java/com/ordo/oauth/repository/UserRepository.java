@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findByUserName(String userName);
 
     UserEntity findAllByUserName(String userName);
+
+    Long countByUserName(String userName);
 }
