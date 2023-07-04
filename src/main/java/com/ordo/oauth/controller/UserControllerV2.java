@@ -111,9 +111,23 @@ public class UserControllerV2 {
   @GetMapping("/login/{registrationId}")
   public String naverLogin(@RequestParam String code, @PathVariable String registrationId) {
 
-    System.out.println("구글 로그인 들어옴");
-    return userServiceV2.socialLogin(code, registrationId);
+    if(registrationId.equals("google")){
+      System.out.println("구글 로그인 들어옴");
+      return userServiceV2.socialLogin(code, registrationId);
+    }
+    if(registrationId.equals("naver")){
+      System.out.println("네이버 로그인 들어옴");
+      return userServiceV2.socialLoginNaver(code, registrationId);
+    }
+    if(registrationId.equals(("kakao"))){
+      System.out.println("카카오 로그인 들어옴");
+      return userServiceV2.socialLoginKakao(code, registrationId);
+    }
+
+    return "";
 
   }
+
+
 
 }

@@ -37,6 +37,13 @@ spring:
             scope:
               - profile
               - email
+#          naver:
+#            client-id: QbmV1JksUqN_pOAFxdDl
+#            client-secret: ZsjXLliWVQ
+#            redirect-uri: http://localhost:8090/api/v2/users/login/naver
+#            scope:
+#              - profile
+#              - email
 
 #      google:
 #        client-id: 938842229751-bhmkrt95tjib70nmkeba9c70amp3gill.apps.googleusercontent.com
