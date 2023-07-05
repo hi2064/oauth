@@ -1,6 +1,7 @@
 package com.ordo.oauth.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordo.oauth.domain.User;
 import com.ordo.oauth.domain.dto.GoogleInfResponse;
 import com.ordo.oauth.domain.dto.GoogleResponse;
@@ -22,6 +23,7 @@ import java.net.ProtocolException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -209,21 +211,31 @@ public class UserServiceV2 {
     header.set("authorization", AccessToken);                         // 헤더에 토큰 set
 
     HttpEntity<?> result = new HttpEntity<>(header);
-
-    HttpEntity<String> response = null;
-
+    Map<String, Object> mmap = new HashMap<>();
+    HttpEntity<Map> response = null;
     try{
       response = restTemplate.exchange(
           PROFILE_API_URL,
           HttpMethod.GET,
           result,
-          String.class
+          Map.class
       );
     }catch (HttpStatusCodeException e){
       System.out.println("error :" + e);
     }
 
-    return "";
+    mmap = response.getBody();
+    String email = ((LinkedHashMap) mmap.get("response")).get("email").toString();
+    System.out.println("네이버 서버에서 받은 이메일 정보 = "+email);
+    Long findUser = userRepository.countByUserName(email);
+    if(findUser != 0){
+      System.out.println("회원");
+      String accessToken = JwtTokenUtils.generateAccessToken(email, secretKey, expireTimeMs);     // jwt 토큰 재생성
+      return accessToken;     // 가입되어있으니 토큰 리턴
+    }else{
+      System.out.println("비회원");
+      return email;
+    }
   }
 
   private String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";         // 카카오 토큰 요청 uri
@@ -236,10 +248,6 @@ public class UserServiceV2 {
 
 
   public String socialLoginKakao(String code, String registrationId){
-
-    System.out.println("code = "+ code);
-    System.out.println("registrationId = "+ registrationId);
-
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
     headers.add("Content-type", "application/x-www.form-urlencoded;charset=utf-8");           // 헤더 인코딩
@@ -259,21 +267,31 @@ public class UserServiceV2 {
     header.set("Authorization", token);
 
     HttpEntity<?> result = new HttpEntity<>(header);
-
-    HttpEntity<String> response = null;
-
+    Map<String, Object> mmap = new HashMap<>();
+    HttpEntity<Map> response = null;
     try{
       response = restTemplate.exchange(
           KAKAO_USER_INFO_URL,
           HttpMethod.GET,
           result,
-          String.class
+          Map.class
       );
     }catch (HttpStatusCodeException e){
       System.out.println("error :" + e);
     }
+    mmap = response.getBody();
+    String email = ((LinkedHashMap) mmap.get("kakao_account")).get("email").toString();
+    System.out.println("카카오 서버에서 받은 이메일 정보 = "+email);
+    Long findUser = userRepository.countByUserName(email);
 
-    return "";
+    if(findUser != 0){
+      System.out.println("회원");
+      String accessToken = JwtTokenUtils.generateAccessToken(email, secretKey, expireTimeMs);     // jwt 토큰 재생성
+      return accessToken;     // 가입되어있으니 토큰 리턴
+    }else{
+      System.out.println("비회원");
+      return email;
+    }
   }
 
 
