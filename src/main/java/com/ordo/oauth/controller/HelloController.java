@@ -16,7 +16,7 @@ public class HelloController {
 
     @GetMapping
     public String hello() {
-        return "오르도아이씨티";
+        return "";
     }
 
     @GetMapping("/api-auth-test")
